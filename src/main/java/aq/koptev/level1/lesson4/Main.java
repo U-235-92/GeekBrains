@@ -7,14 +7,14 @@ public class Main {
     private static final String HUMAN_STEP = "X";
     private static final String COMPUTER_STEP = "O";
     private static final String EMPTY_POSITION = "*";
-    private static final String WINNER_HUMAN_MSG = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ! пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!";
-    private static final String WINNER_COMPUTER_MSG = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!";
-    private static final String REPLAY_MSG = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ? Y/N";
-    private static final String HORIZONTAL_ENTER_MSG = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ: ";
-    private static final String VERTICAL_ENTER_MSG = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ: ";
-    private static final String SIZE_GAME_MAP_MSG = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ 3): ";
-    private static final String WRONG_FORMAT_MSG = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ!";
-    private static final String RECOMMEND_FORMAT_SIZE_GAME_MAP_MSG = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ ";
+    private static final String WINNER_HUMAN_MSG = "Поздравляем! Вы победили!";
+    private static final String WINNER_COMPUTER_MSG = "Победил Компьютер!";
+    private static final String REPLAY_MSG = "Повторить игру? Y/N";
+    private static final String HORIZONTAL_ENTER_MSG = "Введите номер ячейки по горизонтали: ";
+    private static final String VERTICAL_ENTER_MSG = "Введите номер ячейки по вертикали: ";
+    private static final String SIZE_GAME_MAP_MSG = "Введите размер игрового поля (не менее 3): ";
+    private static final String WRONG_FORMAT_MSG = "Неправильный формат введенных данных!";
+    private static final String RECOMMEND_FORMAT_SIZE_GAME_MAP_MSG = "Размер игрового поля должен быть положительным целым числом большим или равным ";
 
     private static String[][] gameMap;
 
@@ -99,7 +99,7 @@ public class Main {
 
             if(!isValidCell(xHuman, yHuman)) {
 
-                System.out.println("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ [" + (xHuman + 1) + ": " + (yHuman + 1) + "] + пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ!" );
+                System.out.println("Ячейка с координатами [" + (xHuman + 1) + ": " + (yHuman + 1) + "] + уже занята!" );
             } else {
 
                 gameMap[xHuman][yHuman] = HUMAN_STEP;
@@ -197,7 +197,7 @@ public class Main {
 
         switch (msg) {
 
-            case "Y", "y", "Yes", "yes", "YES", "пїЅпїЅ", "пїЅпїЅ", "пїЅпїЅ", "+" :
+            case "Y", "y", "Yes", "yes", "YES", "Да", "да", "ДА", "+" :
                 return true;
             default:
                 return false;
@@ -226,7 +226,7 @@ public class Main {
                 return true;
             }
 
-            System.out.println("пїЅпїЅпїЅпїЅпїЅ!");
+            System.out.println("Ничья!");
             System.out.println(REPLAY_MSG);
             return true;
         } else {
