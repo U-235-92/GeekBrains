@@ -16,6 +16,8 @@ public class Main {
         minMax();
         System.out.println(checkArray(new int[]{2, 2, 2, 1, 2, 2, 10, 1}));
         shift(new int[]{1, 2, 3, 4, 5}, 2);
+
+        System.out.println((char) 55);
     }
 
     public static void swapNumbers() {
