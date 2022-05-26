@@ -4,7 +4,6 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
-
     private static final String HUMAN_STEP = "X";
     private static final String COMPUTER_STEP = "O";
     private static final String EMPTY_POSITION = "*";
