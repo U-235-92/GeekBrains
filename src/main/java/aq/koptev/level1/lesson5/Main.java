@@ -3,7 +3,6 @@ package aq.koptev.level1.lesson5;
 public class Main {
 
     public static void main(String[] args) {
-
         int size = 5;
         Employe[] employes = new Employe[size];
         employes[0] = new Employe("Nikolai", "Koptev", "Alexandrovich", "Programmer",
