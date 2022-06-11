@@ -1,0 +1,322 @@
+package aq.koptev.level1.lesson8;
+
+import javax.swing.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.PlainDocument;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class CalculatorView {
+
+    private CalculatorController calculatorController;
+
+    private final String TITLE = "Калькулятор v.1.0";
+    public static final String BTN_ADD_TITLE = "+";
+    public static final String BTN_SUB_TITLE = "-";
+    public static final String BTN_MUL_TITLE = "*";
+    public static final String BTN_DIV_TITLE = "/";
+    public static final String BTN_EQU_TITLE = "=";
+    public static final String BTN_PERCENT_TITLE = "%";
+    public static final String BTN_POINT_TITLE = ".";
+    public static final String BTN_C_TITLE = "C";
+    public static final String BTN_CE_TITLE = "CE";
+    public static final String BTN_B_TITLE = "B";
+    public static final String EMPTY_TEXT = "";
+
+    private final int WIDTH_COMPONENT_CALCULATOR = 265;
+    private final int HEIGHT_DISPLAY_PANEL = 80;
+    private final int HEIGHT_BUTTON_PANEL = 320;
+    private final int ROW_COUNT = 5;
+    private final int COLUMN_COUNT = 4;
+    public static final int MAX_NUMBER_COUNT = 15;
+
+    private JFrame frame;
+    private JPanel panelBase;
+    private JPanel panelButton;
+    private JPanel panelDisplay;
+    private JTextField textFieldDisplay;
+    private final JButton[][] BUTTONS;
+    private final String[] BTN_INITIALS =
+            {		BTN_B_TITLE, 	BTN_C_TITLE, 		BTN_CE_TITLE, 		BTN_PERCENT_TITLE,
+                    "7", 			"8", 				"9", 				BTN_ADD_TITLE,
+                    "4", 			"5", 				"6", 				BTN_SUB_TITLE,
+                    "1", 			"2", 				"3", 				BTN_MUL_TITLE,
+                    "0", 			BTN_POINT_TITLE, 	BTN_EQU_TITLE, 	    BTN_DIV_TITLE
+            };
+
+    public CalculatorView(CalculatorController calculatorController) {
+        BUTTONS = new JButton[ROW_COUNT][COLUMN_COUNT];
+        this.calculatorController = calculatorController;
+    }
+
+    public void createView() {
+        EventQueue.invokeLater(() -> {
+            getContent();
+            setSettingsFrame();
+//            disableButtonCE();
+//            disableButtonC();
+//            disableButtonB();
+//            disableButtonEquals();
+//            disableButtonPercent();
+//            disableButtonAdd();
+//            disableButtonDiv();
+//            disableButtonMul();
+        });
+    }
+
+    private void setSettingsFrame() {
+        frame.setResizable(false);
+        frame.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width / 2) - (WIDTH_COMPONENT_CALCULATOR / 2), 100);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    private void getContent() {
+        packContent();
+        addContent();
+        eventHandle();
+    }
+
+    private void packContent() {
+        packFrame();
+        packBasePanel();
+        packDisplayPanel();
+        packButtonPanel();
+        packTextFieldDisplay();
+        packButtons();
+        setButtonsLocation();
+    }
+
+    private void packFrame() {
+        frame = new JFrame(TITLE);
+    }
+
+    private void packBasePanel() {
+        panelBase = new JPanel();
+        panelBase.setLayout(new BorderLayout());
+    }
+
+    private void packDisplayPanel() {
+        panelDisplay = new JPanel();
+        panelDisplay.setPreferredSize(new Dimension(WIDTH_COMPONENT_CALCULATOR, HEIGHT_DISPLAY_PANEL));
+        panelDisplay.setLayout(new BorderLayout());
+    }
+
+    private void packButtonPanel() {
+        panelButton = new JPanel();
+        panelButton.setLayout(new SpringLayout());
+        panelButton.setPreferredSize(new Dimension(WIDTH_COMPONENT_CALCULATOR, HEIGHT_BUTTON_PANEL));
+    }
+
+    private void packTextFieldDisplay() {
+        textFieldDisplay = new JTextField() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            protected Document createDefaultModel() {
+                return new LimitField();
+            }
+        };
+        textFieldDisplay.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+        textFieldDisplay.setFont(new Font("Arial", Font.PLAIN, 30));
+        textFieldDisplay.setEditable(false);
+        textFieldDisplay.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        textFieldDisplay.setText(EMPTY_TEXT);
+    }
+
+    private void packButtons() {
+        int initialIndex = 0;
+
+        for(int i = 0; i < ROW_COUNT; i++) {
+            for(int j = 0; j < COLUMN_COUNT; j++) {
+                JButton button = new JButton(BTN_INITIALS[initialIndex]);
+                button.setName(BTN_INITIALS[initialIndex]);
+                button.setPreferredSize(new Dimension(55, 55));
+                button.setFont(new Font("arial", Font.PLAIN, 15));
+
+                if(BTN_INITIALS[initialIndex].equals(BTN_C_TITLE)) {
+                    button.setToolTipText("Сброс");
+                } else if(BTN_INITIALS[initialIndex].equals(BTN_CE_TITLE)) {
+                    button.setToolTipText("Очистка содеожимого дисплея");
+                } else if(BTN_INITIALS[initialIndex].equals(BTN_B_TITLE)) {
+                    button.setToolTipText("Удаление последнего введенного символа");
+                }
+                BUTTONS[i][j] = button;
+                initialIndex++;
+            }
+        }
+    }
+
+    private void setButtonsLocation() {
+        int marginNorthSide = 10;
+        int marginWestSide = 15;
+        int marginBetweenButton = 5;
+
+        for(int i = 0; i < ROW_COUNT; i++) {
+            for(int j = 0; j < COLUMN_COUNT; j++) {
+                if(i == 0) {
+                    ((SpringLayout) panelButton.getLayout()).putConstraint(SpringLayout.NORTH, BUTTONS[i][j], marginNorthSide,
+                            SpringLayout.NORTH, panelButton);
+                    if(j == 0) {
+                        ((SpringLayout) panelButton.getLayout()).putConstraint(SpringLayout.WEST, BUTTONS[i][j], marginWestSide,
+                                SpringLayout.WEST, panelButton);
+                    } else {
+                        ((SpringLayout) panelButton.getLayout()).putConstraint(SpringLayout.WEST, BUTTONS[i][j], marginBetweenButton,
+                                SpringLayout.EAST,  BUTTONS[i][j - 1]);
+                    }
+                } else {
+                    ((SpringLayout) panelButton.getLayout()).putConstraint(SpringLayout.NORTH, BUTTONS[i][j], marginBetweenButton,
+                            SpringLayout.SOUTH, BUTTONS[i - 1][j]);
+                    if(j == 0) {
+                        ((SpringLayout) panelButton.getLayout()).putConstraint(SpringLayout.WEST, BUTTONS[i][j], marginWestSide,
+                                SpringLayout.WEST, panelButton);
+                    } else {
+                        ((SpringLayout) panelButton.getLayout()).putConstraint(SpringLayout.WEST, BUTTONS[i][j], marginBetweenButton,
+                                SpringLayout.EAST,  BUTTONS[i][j - 1]);
+                    }
+                }
+            }
+        }
+    }
+
+    private void addContent() {
+        addButtonsOnButtonPanel();
+        addTextFieldDisplayToDisplayPanel();
+        addDisplayPanelOnBasePanel();
+        addButtonPanelOnBasePanel();
+        addBasePanelOnFrame();
+    }
+
+    private void addButtonsOnButtonPanel() {
+        for(int i = 0; i < ROW_COUNT; i++) {
+            for(int j = 0; j < COLUMN_COUNT; j++) {
+                panelButton.add(BUTTONS[i][j]);
+            }
+        }
+    }
+
+    private void addTextFieldDisplayToDisplayPanel() {
+        panelDisplay.add(textFieldDisplay);
+    }
+
+    private void addDisplayPanelOnBasePanel() {
+        panelBase.add(panelDisplay, BorderLayout.NORTH);
+    }
+
+    private void addButtonPanelOnBasePanel() {
+        panelBase.add(panelButton, BorderLayout.CENTER);
+    }
+
+    private void addBasePanelOnFrame() {
+        frame.add(panelBase);
+    }
+
+    public void enableButton(String buttonTitle) {
+        for(int i = 0; i < ROW_COUNT; i++) {
+            for(int j = 0; j < COLUMN_COUNT; j++) {
+                if(BUTTONS[i][j].getText().equals(buttonTitle)) {
+                    BUTTONS[i][j].setEnabled(true);
+                }
+            }
+        }
+    }
+
+    public void disableButton(String buttonTitle) {
+        for(int i = 0; i < ROW_COUNT; i++) {
+            for(int j = 0; j < COLUMN_COUNT; j++) {
+                if(BUTTONS[i][j].getText().equals(buttonTitle)) {
+                    BUTTONS[i][j].setEnabled(false);
+                }
+            }
+        }
+    }
+
+    public boolean isEnableButton(String buttonTitle) {
+        for(int i = 0; i < ROW_COUNT; i++) {
+            for(int j = 0; j < COLUMN_COUNT; j++) {
+                if(BUTTONS[i][j].getText().equals(buttonTitle)) {
+                    return BUTTONS[i][j].isEnabled();
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isDisableButton(String buttonTitle) {
+        for(int i = 0; i < ROW_COUNT; i++) {
+            for(int j = 0; j < COLUMN_COUNT; j++) {
+                if(BUTTONS[i][j].getText().equals(buttonTitle)) {
+                    return !BUTTONS[i][j].isEnabled();
+                }
+            }
+        }
+        return false;
+    }
+
+    private class LimitField extends PlainDocument {
+        private static final long serialVersionUID = 1L;
+        @Override
+        public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+            if(str == null) {
+                return;
+            }
+            if((getLength() + str.length()) <= MAX_NUMBER_COUNT) {
+                super.insertString(offs, str, a);
+            } else {
+                textFieldDisplay.setText(str.substring(0, str.length() -  1));
+            }
+        }
+    }
+
+    private void eventHandle() {
+        ActionListener mouseListenerNumber = (ae) -> {
+            JButton b = (JButton) ae.getSource();
+            String textButton = b.getText();
+            String textDisplay = textFieldDisplay.getText();
+            Pattern patternNumbers = Pattern.compile("\\d");
+            Pattern patternOperators = Pattern.compile("["+BTN_ADD_TITLE+BTN_SUB_TITLE+BTN_DIV_TITLE+BTN_MUL_TITLE+
+                    BTN_PERCENT_TITLE+BTN_EQU_TITLE+BTN_CE_TITLE+BTN_C_TITLE+BTN_B_TITLE+"\\"+BTN_POINT_TITLE+"]" );
+            Matcher matcherNumber = patternNumbers.matcher(textButton);
+            Matcher matcherOperator = patternOperators.matcher(textButton);
+            if(textButton.equals(BTN_POINT_TITLE)) {
+                if(textDisplay.equals(EMPTY_TEXT)) {
+                    String operand = "0" + textButton;
+                    textFieldDisplay.setText(operand);
+                    disableButton(BTN_POINT_TITLE);
+                } else {
+                    String operand = textDisplay + textButton;
+                    textFieldDisplay.setText(operand);
+                    disableButton(BTN_POINT_TITLE);
+                }
+            } else if(textButton.equals(BTN_SUB_TITLE)) {
+                if(!textDisplay.equals(EMPTY_TEXT)) {
+                    textFieldDisplay.setText(EMPTY_TEXT);
+                    enableButton(BTN_POINT_TITLE);
+                    enableButton(BTN_SUB_TITLE);
+                } else {
+                    String operand = textDisplay + textButton;
+                    textFieldDisplay.setText(operand);
+                }
+            } else {
+                if(matcherNumber.find()) {
+                    String operand = textDisplay + textButton;
+                    textFieldDisplay.setText(operand);
+                } else { //ДОБАВИТЬ ПРОВЕРКУ КНОПОПОК B C CE % =
+                    textFieldDisplay.setText(EMPTY_TEXT);
+                    enableButton(BTN_POINT_TITLE);
+                    enableButton(BTN_SUB_TITLE);
+                }
+            }
+        };
+
+        for(JButton[] buttonRow : BUTTONS) {
+            for(JButton button : buttonRow) {
+                button.addActionListener(mouseListenerNumber);
+            }
+        }
+    }
+}
