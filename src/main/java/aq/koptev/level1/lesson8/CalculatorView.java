@@ -282,34 +282,47 @@ public class CalculatorView {
                     BTN_PERCENT_TITLE+BTN_EQU_TITLE+BTN_CE_TITLE+BTN_C_TITLE+BTN_B_TITLE+"\\"+BTN_POINT_TITLE+"]" );
             Matcher matcherNumber = patternNumbers.matcher(textButton);
             Matcher matcherOperator = patternOperators.matcher(textButton);
-            if(textButton.equals(BTN_POINT_TITLE)) {
-                if(textDisplay.equals(EMPTY_TEXT)) {
-                    String operand = "0" + textButton;
-                    textFieldDisplay.setText(operand);
-                    disableButton(BTN_POINT_TITLE);
-                } else {
-                    String operand = textDisplay + textButton;
-                    textFieldDisplay.setText(operand);
-                    disableButton(BTN_POINT_TITLE);
-                }
-            } else if(textButton.equals(BTN_SUB_TITLE)) {
-                if(!textDisplay.equals(EMPTY_TEXT)) {
-                    textFieldDisplay.setText(EMPTY_TEXT);
-                    enableButton(BTN_POINT_TITLE);
-                    enableButton(BTN_SUB_TITLE);
-                } else {
-                    String operand = textDisplay + textButton;
-                    textFieldDisplay.setText(operand);
-                }
-            } else {
-                if(matcherNumber.find()) {
-                    String operand = textDisplay + textButton;
-                    textFieldDisplay.setText(operand);
-                } else { //ДОБАВИТЬ ПРОВЕРКУ КНОПОПОК B C CE % =
-                    textFieldDisplay.setText(EMPTY_TEXT);
-                    enableButton(BTN_POINT_TITLE);
-                    enableButton(BTN_SUB_TITLE);
-                }
+            switch (textButton) {
+                case BTN_POINT_TITLE:
+                    handleButtonPointEvent(textDisplay, textButton);
+                    break;
+                case BTN_SUB_TITLE:
+                    handleButtonSubEvent(textDisplay, textButton);
+                    break;
+                case BTN_ADD_TITLE:
+                    handleButtonAddEvent(textDisplay, textButton);
+                    break;
+                case BTN_DIV_TITLE:
+                    handleButtonDivEvent(textDisplay, textButton);
+                    break;
+                case BTN_MUL_TITLE:
+                    handleButtonMulEvent(textDisplay, textButton);
+                    break;
+                case BTN_PERCENT_TITLE:
+                    handleButtonPercentEvent(textDisplay, textButton);
+                    break;
+                case BTN_B_TITLE:
+                    handleButtonB_Event(textDisplay, textButton);
+                    break;
+                case BTN_C_TITLE:
+                    handleButtonC_Event(textDisplay, textButton);
+                    break;
+                case BTN_CE_TITLE:
+                    handleButtonCE_Event(textDisplay, textButton);
+                    break;
+                case BTN_EQU_TITLE:
+                    handleButtonEqualsEvent(textDisplay, textButton);
+                    break;
+                default:
+                    if(matcherNumber.find()) {
+                        setTextDisplay(textDisplay, textButton);
+                    } else {
+                        cleanDisplay();
+                        if(isDisableButton(BTN_POINT_TITLE)) {
+                            enableButton(BTN_POINT_TITLE);
+                        }
+                    }
+                    break;
             }
         };
 
@@ -318,5 +331,114 @@ public class CalculatorView {
                 button.addActionListener(mouseListenerNumber);
             }
         }
+    }
+
+    private void handleButtonPointEvent(String textDisplay, String textButton) {
+        if(textDisplay.equals(EMPTY_TEXT)) {
+            setTextDisplay(EMPTY_TEXT, "0" + textButton);
+            disableButton(BTN_POINT_TITLE);
+        } else {
+            setTextDisplay(textDisplay, textButton);
+            disableButton(BTN_POINT_TITLE);
+        }
+    }
+
+    private void handleButtonPercentEvent(String textDisplay, String textButton) {
+
+    }
+
+    private void handleButtonB_Event(String textDisplay, String textButton) {
+        if(!textDisplay.equals(EMPTY_TEXT)) {
+            if(textDisplay.length() > 1) {
+                String operand = textDisplay.substring(0, textDisplay.length() - 1);
+                setTextDisplay(operand, EMPTY_TEXT);
+                Pattern patternPoint = Pattern.compile("\\.");
+                Matcher matcherPoint = patternPoint.matcher(operand);
+                if(!matcherPoint.find()) {
+                    if(isDisableButton(BTN_POINT_TITLE)) {
+                        enableButton(BTN_POINT_TITLE);
+                    }
+                }
+            } else {
+                cleanDisplay();
+            }
+        }
+    }
+
+    private void handleButtonCE_Event(String textDisplay, String textButton) {
+        if(!textDisplay.equals(EMPTY_TEXT)) {
+            cleanDisplay();
+        }
+    }
+
+    private void handleButtonC_Event(String textDisplay, String textButton) {
+        if(!textDisplay.equals(EMPTY_TEXT)) {
+            cleanDisplay();
+        }
+    }
+
+    private void handleButtonEqualsEvent(String textDisplay, String textButton) {
+
+    }
+
+    private void handleButtonSubEvent(String textDisplay, String textButton) {
+        if(textDisplay.equals(EMPTY_TEXT)) {
+            setTextDisplay(textDisplay, textButton);
+        } else {
+            calculatorController.pushOperand(textDisplay);
+            calculatorController.pushOperator(textButton);
+            cleanDisplay();
+            if(isDisableButton(BTN_POINT_TITLE)) {
+                enableButton(BTN_POINT_TITLE);
+            }
+        }
+    }
+
+    private void handleButtonAddEvent(String textDisplay, String textButton) {
+        if(textDisplay.equals(EMPTY_TEXT)) {
+            setTextDisplay(textDisplay, EMPTY_TEXT);
+        } else {
+            calculatorController.pushOperand(textDisplay);
+            calculatorController.pushOperator(textButton);
+            cleanDisplay();
+            if(isDisableButton(BTN_POINT_TITLE)) {
+                enableButton(BTN_POINT_TITLE);
+            }
+        }
+    }
+
+    private void handleButtonMulEvent(String textDisplay, String textButton) {
+        if(textDisplay.equals(EMPTY_TEXT)) {
+            setTextDisplay(textDisplay, EMPTY_TEXT);
+        } else {
+            calculatorController.pushOperand(textDisplay);
+            calculatorController.pushOperator(textButton);
+            cleanDisplay();
+            if(isDisableButton(BTN_POINT_TITLE)) {
+                enableButton(BTN_POINT_TITLE);
+            }
+        }
+    }
+
+    private void handleButtonDivEvent(String textDisplay, String textButton) {
+        if(textDisplay.equals(EMPTY_TEXT)) {
+            setTextDisplay(textDisplay, EMPTY_TEXT);
+        } else {
+            calculatorController.pushOperand(textDisplay);
+            calculatorController.pushOperator(textButton);
+            cleanDisplay();
+            if(isDisableButton(BTN_POINT_TITLE)) {
+                enableButton(BTN_POINT_TITLE);
+            }
+        }
+    }
+
+    private void cleanDisplay() {
+        textFieldDisplay.setText(EMPTY_TEXT);
+    }
+
+    private void setTextDisplay(String textDisplay, String textButton) {
+        String operand = textDisplay + textButton;
+        textFieldDisplay.setText(operand);
     }
 }
