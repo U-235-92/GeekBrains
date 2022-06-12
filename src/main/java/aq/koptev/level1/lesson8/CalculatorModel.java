@@ -33,6 +33,7 @@ public class CalculatorModel {
     }
 
     public void pushOperand(String operand) {
+        System.out.println(operand);
         stackOperand.push(new BigDecimal(operand));
     }
 

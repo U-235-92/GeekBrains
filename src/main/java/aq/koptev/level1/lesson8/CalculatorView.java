@@ -278,11 +278,13 @@ public class CalculatorView {
         ActionListener mouseListenerNumber = (ae) -> {
             JButton b = (JButton) ae.getSource();
             String textButton = b.getText();
-//            String textDisplay = textFieldDisplay.getText();
             String textDisplay = null;
             if(isAllowCleanDisplay()) {
                 cleanDisplay();
                 textDisplay = textFieldDisplay.getText();
+                if(textDisplay.equals(EMPTY_TEXT)) {
+                    textDisplay = "0";
+                }
                 disallowCleanDisplay();
             } else {
                 textDisplay = textFieldDisplay.getText();
