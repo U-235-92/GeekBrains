@@ -24,6 +24,10 @@ public class CalculatorController {
         calculatorModel.pushOperator(operator);
     }
 
+    protected String getResult() {
+        return calculatorModel.getResult();
+    }
+
     protected String printResult() {
         return calculatorModel.printResult();
     }

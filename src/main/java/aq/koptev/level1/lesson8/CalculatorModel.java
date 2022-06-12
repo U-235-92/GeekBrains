@@ -5,36 +5,89 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 public class CalculatorModel {
-
     private final String DIVIDE_BY_ZERO_ERROR_MESSAGE = "Divide by zero";
     private final String TO_LONG_RESULT_VALUE_ERROR_MESSAGE = "Out of limit";
+    private final String EMPTY_RESULT = "";
+    private final String OPERATOR_ADD = "+";
+    private final String OPERATOR_SUB = "-";
+    private final String OPERATOR_DIV = "/";
+    private final String OPERATOR_MUL = "*";
+    private final String OPERATOR_EQU = "=";
+    private final String OPERATOR_PERCENT = "%";
     private Deque<String> stackOperator;
     private Deque<BigDecimal> stackOperand;
 
+    private String firstOperator;
     private String lastOperator;
-
-    private BigDecimal operandA;
-    private BigDecimal operandB;
+    private BigDecimal firstOperand;
+    private BigDecimal lastOperand;
     private BigDecimal resultOperand;
 
     public CalculatorModel() {
         stackOperand = new LinkedList<>();
         stackOperator = new LinkedList<>();
+//        firstOperand = new BigDecimal("0");
+//        lastOperand = new BigDecimal("0");
+        lastOperator = "";
+        firstOperator = "";
     }
 
     public void pushOperand(String operand) {
-//        stackOperand.push(operand);
+        stackOperand.push(new BigDecimal(operand));
     }
 
     public void pushOperator(String operator) {
         stackOperator.push(operator);
     }
 
+    private void resetCalculator() {
+        firstOperand = null;
+        lastOperand = null;
+        resultOperand = null;
+        lastOperator = "";
+        firstOperator = "";
+        stackOperator.removeAll(stackOperator);
+        stackOperand.removeAll(stackOperand);
+    }
+
+    public String getResult() {
+        String stringResult = EMPTY_RESULT;
+        if(stackOperand.size() == 2) {
+            lastOperator = stackOperator.pop();
+            if(lastOperator.equals(OPERATOR_EQU)) {
+                firstOperator = stackOperator.pop();
+                lastOperand = stackOperand.pop();
+                firstOperand = stackOperand.pop();
+                stringResult = doCalculate(firstOperand, lastOperand, firstOperator);
+                if(stringResult.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || stringResult.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
+                    return stringResult;
+                } else {
+                    pushOperand(stringResult);
+                    pushOperand(lastOperand.toString());
+                    pushOperator(firstOperator);
+                    System.out.println(stringResult);
+                }
+            } else {
+                firstOperator = stackOperator.pop();
+                lastOperand = stackOperand.pop();
+                firstOperand = stackOperand.pop();
+                stringResult = doCalculate(firstOperand, lastOperand, firstOperator);
+                if(stringResult.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || stringResult.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
+                    return stringResult;
+                } else {
+                    pushOperand(stringResult);
+                    pushOperator(lastOperator);
+                    System.out.println(stringResult);
+                }
+            }
+        } else if(stackOperand.size() > 2) {
+            stackOperand.pop();
+            stringResult = getResult();
+        }
+        return stringResult;
+    }
+
     public String printResult() {
-        operandA = popOperand();
-        operandB = popOperand();
-        lastOperator = popOperator();
-        resultOperand = doCalculate(operandA, operandB, lastOperator);
         return resultOperand.toString();
     }
 
@@ -50,9 +103,28 @@ public class CalculatorModel {
         return stackOperand.pop();
     }
 
-    private BigDecimal doCalculate(BigDecimal operandA, BigDecimal operandB, String operator) {
-
-        return null;
+    private String doCalculate(BigDecimal operandA, BigDecimal operandB, String operator) {
+        resultOperand = new BigDecimal("0");
+        switch (operator) {
+            case OPERATOR_ADD:
+                resultOperand = operandA.add(operandB);
+                break;
+            case OPERATOR_SUB:
+                resultOperand = operandA.subtract(operandB);
+                break;
+            case OPERATOR_DIV:
+                if(operandB.intValue() == 0) {
+                    return DIVIDE_BY_ZERO_ERROR_MESSAGE;
+                }
+                resultOperand = operandA.divide(operandB);
+                break;
+            case OPERATOR_MUL:
+                resultOperand = operandA.multiply(operandB);
+                break;
+            case OPERATOR_PERCENT:
+                break;
+        }
+        return resultOperand.toString();
     }
 
     /*Ввод числа. Ввод оператора. Добавление числа в стек. Добавление оператора в стек.

@@ -34,6 +34,8 @@ public class CalculatorView {
     private final int COLUMN_COUNT = 4;
     public static final int MAX_NUMBER_COUNT = 15;
 
+    private boolean isAllowCleanDisplay = false;
+
     private JFrame frame;
     private JPanel panelBase;
     private JPanel panelButton;
@@ -276,7 +278,15 @@ public class CalculatorView {
         ActionListener mouseListenerNumber = (ae) -> {
             JButton b = (JButton) ae.getSource();
             String textButton = b.getText();
-            String textDisplay = textFieldDisplay.getText();
+//            String textDisplay = textFieldDisplay.getText();
+            String textDisplay = null;
+            if(isAllowCleanDisplay()) {
+                cleanDisplay();
+                textDisplay = textFieldDisplay.getText();
+                disallowCleanDisplay();
+            } else {
+                textDisplay = textFieldDisplay.getText();
+            }
             Pattern patternNumbers = Pattern.compile("\\d");
             Pattern patternOperators = Pattern.compile("["+BTN_ADD_TITLE+BTN_SUB_TITLE+BTN_DIV_TITLE+BTN_MUL_TITLE+
                     BTN_PERCENT_TITLE+BTN_EQU_TITLE+BTN_CE_TITLE+BTN_C_TITLE+BTN_B_TITLE+"\\"+BTN_POINT_TITLE+"]" );
@@ -315,6 +325,10 @@ public class CalculatorView {
                     break;
                 default:
                     if(matcherNumber.find()) {
+                        if(isAllowCleanDisplay()) {
+                            cleanDisplay();
+                            disallowCleanDisplay();
+                        }
                         setTextDisplay(textDisplay, textButton);
                     } else {
                         cleanDisplay();
@@ -378,7 +392,11 @@ public class CalculatorView {
     }
 
     private void handleButtonEqualsEvent(String textDisplay, String textButton) {
-
+        calculatorController.pushOperand(textDisplay);
+        calculatorController.pushOperator(textButton);
+        cleanDisplay();
+        String resultString = calculatorController.getResult();
+        setTextDisplay(resultString, EMPTY_TEXT);
     }
 
     private void handleButtonSubEvent(String textDisplay, String textButton) {
@@ -387,10 +405,11 @@ public class CalculatorView {
         } else {
             calculatorController.pushOperand(textDisplay);
             calculatorController.pushOperator(textButton);
-            cleanDisplay();
-            if(isDisableButton(BTN_POINT_TITLE)) {
-                enableButton(BTN_POINT_TITLE);
-            }
+            allowCleanDisplay();
+            String resultString = calculatorController.getResult();
+            setTextDisplay(resultString == EMPTY_TEXT ? textDisplay : resultString, EMPTY_TEXT);
+//            cleanDisplay();
+
         }
     }
 
@@ -400,10 +419,11 @@ public class CalculatorView {
         } else {
             calculatorController.pushOperand(textDisplay);
             calculatorController.pushOperator(textButton);
-            cleanDisplay();
-            if(isDisableButton(BTN_POINT_TITLE)) {
-                enableButton(BTN_POINT_TITLE);
-            }
+            allowCleanDisplay();
+            String resultString = calculatorController.getResult();
+            setTextDisplay(resultString == EMPTY_TEXT ? textDisplay : resultString, EMPTY_TEXT);
+//            cleanDisplay();
+
         }
     }
 
@@ -413,10 +433,11 @@ public class CalculatorView {
         } else {
             calculatorController.pushOperand(textDisplay);
             calculatorController.pushOperator(textButton);
-            cleanDisplay();
-            if(isDisableButton(BTN_POINT_TITLE)) {
-                enableButton(BTN_POINT_TITLE);
-            }
+            allowCleanDisplay();
+            String resultString = calculatorController.getResult();
+            setTextDisplay(resultString == EMPTY_TEXT ? textDisplay : resultString, EMPTY_TEXT);
+//            cleanDisplay();
+
         }
     }
 
@@ -426,10 +447,11 @@ public class CalculatorView {
         } else {
             calculatorController.pushOperand(textDisplay);
             calculatorController.pushOperator(textButton);
-            cleanDisplay();
-            if(isDisableButton(BTN_POINT_TITLE)) {
-                enableButton(BTN_POINT_TITLE);
-            }
+            allowCleanDisplay();
+            String resultString = calculatorController.getResult();
+            setTextDisplay(resultString == EMPTY_TEXT ? textDisplay : resultString, EMPTY_TEXT);
+//            cleanDisplay();
+
         }
     }
 
@@ -440,5 +462,17 @@ public class CalculatorView {
     private void setTextDisplay(String textDisplay, String textButton) {
         String operand = textDisplay + textButton;
         textFieldDisplay.setText(operand);
+    }
+
+    private boolean isAllowCleanDisplay() {
+        return isAllowCleanDisplay;
+    }
+
+    private void allowCleanDisplay() {
+        isAllowCleanDisplay = true;
+    }
+
+    private void disallowCleanDisplay() {
+        isAllowCleanDisplay = false;
     }
 }
