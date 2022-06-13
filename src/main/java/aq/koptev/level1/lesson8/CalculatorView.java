@@ -59,14 +59,6 @@ public class CalculatorView {
         EventQueue.invokeLater(() -> {
             getContent();
             setSettingsFrame();
-//            disableButtonCE();
-//            disableButtonC();
-//            disableButtonB();
-//            disableButtonEquals();
-//            disableButtonPercent();
-//            disableButtonAdd();
-//            disableButtonDiv();
-//            disableButtonMul();
         });
     }
 
@@ -282,9 +274,6 @@ public class CalculatorView {
             if(isAllowCleanDisplay()) {
                 cleanDisplay();
                 textDisplay = textFieldDisplay.getText();
-                if(textDisplay.equals(EMPTY_TEXT)) {
-                    textDisplay = "0";
-                }
                 disallowCleanDisplay();
             } else {
                 textDisplay = textFieldDisplay.getText();
@@ -330,6 +319,12 @@ public class CalculatorView {
                         if(isAllowCleanDisplay()) {
                             cleanDisplay();
                             disallowCleanDisplay();
+                        }
+                        if (isDisableButton(BTN_B_TITLE)) {
+                            enableButton(BTN_B_TITLE);
+                        }
+                        if(isDisableButton(BTN_CE_TITLE)) {
+                            enableButton(BTN_CE_TITLE);
                         }
                         setTextDisplay(textDisplay, textButton);
                     } else {
@@ -385,11 +380,19 @@ public class CalculatorView {
         if(!textDisplay.equals(EMPTY_TEXT)) {
             cleanDisplay();
         }
+        if (isDisableButton(BTN_B_TITLE)) {
+            enableButton(BTN_B_TITLE);
+        }
     }
 
     private void handleButtonC_Event(String textDisplay, String textButton) {
-        if(!textDisplay.equals(EMPTY_TEXT)) {
-            cleanDisplay();
+        cleanDisplay();
+        calculatorController.cleanMemory();
+        if (isDisableButton(BTN_B_TITLE)) {
+            enableButton(BTN_B_TITLE);
+        }
+        if(isDisableButton(BTN_CE_TITLE)) {
+            enableButton(BTN_CE_TITLE);
         }
     }
 
@@ -399,6 +402,8 @@ public class CalculatorView {
         cleanDisplay();
         String resultString = calculatorController.getResult();
         setTextDisplay(resultString, EMPTY_TEXT);
+        disableButton(BTN_B_TITLE);
+        disableButton(BTN_CE_TITLE);
     }
 
     private void handleButtonSubEvent(String textDisplay, String textButton) {
@@ -410,8 +415,6 @@ public class CalculatorView {
             allowCleanDisplay();
             String resultString = calculatorController.getResult();
             setTextDisplay(resultString == EMPTY_TEXT ? textDisplay : resultString, EMPTY_TEXT);
-//            cleanDisplay();
-
         }
     }
 
@@ -424,8 +427,6 @@ public class CalculatorView {
             allowCleanDisplay();
             String resultString = calculatorController.getResult();
             setTextDisplay(resultString == EMPTY_TEXT ? textDisplay : resultString, EMPTY_TEXT);
-//            cleanDisplay();
-
         }
     }
 
@@ -438,8 +439,6 @@ public class CalculatorView {
             allowCleanDisplay();
             String resultString = calculatorController.getResult();
             setTextDisplay(resultString == EMPTY_TEXT ? textDisplay : resultString, EMPTY_TEXT);
-//            cleanDisplay();
-
         }
     }
 
@@ -452,8 +451,6 @@ public class CalculatorView {
             allowCleanDisplay();
             String resultString = calculatorController.getResult();
             setTextDisplay(resultString == EMPTY_TEXT ? textDisplay : resultString, EMPTY_TEXT);
-//            cleanDisplay();
-
         }
     }
 

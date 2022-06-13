@@ -14,6 +14,7 @@ public class CalculatorModel {
     private final String OPERATOR_MUL = "*";
     private final String OPERATOR_EQU = "=";
     private final String OPERATOR_PERCENT = "%";
+    private final String ZERO_VALUE = "0";
     private Deque<String> stackOperator;
     private Deque<BigDecimal> stackOperand;
 
@@ -26,21 +27,31 @@ public class CalculatorModel {
     public CalculatorModel() {
         stackOperand = new LinkedList<>();
         stackOperator = new LinkedList<>();
-//        firstOperand = new BigDecimal("0");
-//        lastOperand = new BigDecimal("0");
         lastOperator = "";
         firstOperator = "";
     }
 
     public void pushOperand(String operand) {
-        System.out.println(operand);
-        stackOperand.push(new BigDecimal(operand));
+        switch (operand) {
+            case EMPTY_RESULT:
+                stackOperand.push(new BigDecimal(ZERO_VALUE));
+                break;
+            case DIVIDE_BY_ZERO_ERROR_MESSAGE:
+            case TO_LONG_RESULT_VALUE_ERROR_MESSAGE:
+                resetCalculator();
+                break;
+            default:
+                stackOperand.push(new BigDecimal(operand));
+        }
     }
 
     public void pushOperator(String operator) {
         stackOperator.push(operator);
     }
 
+    public void cleanMemory() {
+        resetCalculator();
+    }
     private void resetCalculator() {
         firstOperand = null;
         lastOperand = null;
@@ -50,42 +61,48 @@ public class CalculatorModel {
         stackOperator.removeAll(stackOperator);
         stackOperand.removeAll(stackOperand);
     }
-
     public String getResult() {
-        String stringResult = EMPTY_RESULT;
-        if(stackOperand.size() == 2) {
+        String resultString = EMPTY_RESULT;
+        if(stackOperand.size() > 1) {
             lastOperator = stackOperator.pop();
             if(lastOperator.equals(OPERATOR_EQU)) {
+                if(stackOperand.size() > 2) {
+                    while(stackOperand.size() != 2) {
+                        stackOperand.pop();
+                    }
+                }
                 firstOperator = stackOperator.pop();
                 lastOperand = stackOperand.pop();
                 firstOperand = stackOperand.pop();
-                stringResult = doCalculate(firstOperand, lastOperand, firstOperator);
-                if(stringResult.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || stringResult.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
-                    return stringResult;
+                resultString = doCalculate(firstOperand, lastOperand, firstOperator);
+                if(resultString.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || resultString.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
+                    return resultString;
                 } else {
-                    pushOperand(stringResult);
-                    pushOperand(lastOperand.toString());
-                    pushOperator(firstOperator);
-                    System.out.println(stringResult);
+                    stackOperand.push(resultOperand);
+                    stackOperand.push(lastOperand);
+                    stackOperator.push(firstOperator);
+                    firstOperator = lastOperator;
                 }
             } else {
-                firstOperator = stackOperator.pop();
-                lastOperand = stackOperand.pop();
-                firstOperand = stackOperand.pop();
-                stringResult = doCalculate(firstOperand, lastOperand, firstOperator);
-                if(stringResult.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || stringResult.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
-                    return stringResult;
+                if(firstOperator.equals(OPERATOR_EQU)) {
+                    resultString = resultOperand.toString();
+                    stackOperand.pop();
+                    stackOperand.pop();
                 } else {
-                    pushOperand(stringResult);
-                    pushOperator(lastOperator);
-                    System.out.println(stringResult);
+                    firstOperator = stackOperator.pop();
+                    lastOperand = stackOperand.pop();
+                    firstOperand = stackOperand.pop();
+                    resultString = doCalculate(firstOperand, lastOperand, firstOperator);
+                    if(resultString.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || resultString.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
+                        return resultString;
+                    } else {
+                        stackOperand.push(resultOperand);
+                        stackOperator.push(lastOperator);
+                    }
                 }
             }
-        } else if(stackOperand.size() > 2) {
-            stackOperand.pop();
-            stringResult = getResult();
         }
-        return stringResult;
+        return resultString;
     }
 
     public String printResult() {
@@ -125,19 +142,9 @@ public class CalculatorModel {
             case OPERATOR_PERCENT:
                 break;
         }
+        if(resultOperand.toString().length() > CalculatorView.MAX_NUMBER_COUNT) {
+            return TO_LONG_RESULT_VALUE_ERROR_MESSAGE;
+        }
         return resultOperand.toString();
     }
-
-    /*Ввод числа. Ввод оператора. Добавление числа в стек. Добавление оператора в стек.
-    Проверить сколько элементов находится в стеке чисел.
-    Если одно, то, поместить введенный оператор в стек операторов, продолжить.
-    Если число не одно, то запомнить последнее введенное число, запомнить последний введенный оператор,
-    Извлеч из стека оператор введенный на предыдущем шаге. Выполнить оператор. Проверить результат выражения.
-    Если корректно, поместить результат в стек чисел, поместить оператор в стек операторов.
-    Если некорректно, вывод сообщения об ошибке. Продолжить.
-
-    Ввели число (А), ввели оператор, поместили А в стек, поместили оператор в стек,
-    Ввели число (Б), ввели оператор,  запомнили его. Извлекаем А и Б из стека, извлекаем оператор из стека,
-    Принимаем оператор и записываем результат С в стек. Помещаем последний введенный оператор в стек.
-    */
 }

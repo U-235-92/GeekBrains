@@ -24,6 +24,10 @@ public class CalculatorController {
         calculatorModel.pushOperator(operator);
     }
 
+    protected void cleanMemory() {
+        calculatorModel.cleanMemory();
+    }
+
     protected String getResult() {
         return calculatorModel.getResult();
     }
