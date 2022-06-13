@@ -31,12 +31,4 @@ public class CalculatorController {
     protected String getResult() {
         return calculatorModel.getResult();
     }
-
-    protected String printResult() {
-        return calculatorModel.printResult();
-    }
-
-    protected String printError() {
-        return calculatorModel.printError();
-    }
 }

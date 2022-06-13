@@ -31,94 +31,68 @@ public class CalculatorModel {
         firstOperator = "";
     }
 
-    public void pushOperand(String operand) {
-        switch (operand) {
-            case EMPTY_RESULT:
-                stackOperand.push(new BigDecimal(ZERO_VALUE));
-                break;
-            case DIVIDE_BY_ZERO_ERROR_MESSAGE:
-            case TO_LONG_RESULT_VALUE_ERROR_MESSAGE:
-                resetCalculator();
-                break;
-            default:
-                stackOperand.push(new BigDecimal(operand));
-        }
-    }
-
-    public void pushOperator(String operator) {
-        stackOperator.push(operator);
-    }
-
-    public void cleanMemory() {
-        resetCalculator();
-    }
-    private void resetCalculator() {
-        firstOperand = null;
-        lastOperand = null;
-        resultOperand = null;
-        lastOperator = "";
-        firstOperator = "";
-        stackOperator.removeAll(stackOperator);
-        stackOperand.removeAll(stackOperand);
-    }
     public String getResult() {
         String resultString = EMPTY_RESULT;
         if(stackOperand.size() > 1) {
-            lastOperator = stackOperator.pop();
+            lastOperator = popOperator();
             if(lastOperator.equals(OPERATOR_EQU)) {
                 if(stackOperand.size() > 2) {
                     while(stackOperand.size() != 2) {
-                        stackOperand.pop();
+                        popOperand();
                     }
                 }
-                firstOperator = stackOperator.pop();
-                lastOperand = stackOperand.pop();
-                firstOperand = stackOperand.pop();
+                firstOperator = popOperator();
+                lastOperand = popOperand();
+                firstOperand = popOperand();
                 resultString = doCalculate(firstOperand, lastOperand, firstOperator);
                 if(resultString.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || resultString.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
                     return resultString;
                 } else {
-                    stackOperand.push(resultOperand);
-                    stackOperand.push(lastOperand);
-                    stackOperator.push(firstOperator);
+                    pushOperand(resultOperand.toString());
+                    pushOperand(lastOperand.toString());
+                    pushOperator(firstOperator);
+                    firstOperator = lastOperator;
+                }
+            } else if(lastOperator.equals(OPERATOR_PERCENT)) {
+                lastOperand = popOperand();//stackOperand.pop();
+                firstOperand = peekOperand();//stackOperand.peek();
+                String resultPercent = doCalculate(firstOperand, lastOperand, lastOperator);
+                if(resultPercent.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || resultPercent.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
+                    return resultPercent;
+                }
+                firstOperator = stackOperator.pop();
+                resultString = doCalculate(firstOperand, new BigDecimal(resultPercent), firstOperator);
+                if(resultString.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || resultString.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
+                    return resultString;
+                } else {
+                    popOperand();
+                    pushOperand(resultOperand.toString());
+                    pushOperand(resultPercent);
+                    pushOperator(firstOperator);
                     firstOperator = lastOperator;
                 }
             } else {
-                if(firstOperator.equals(OPERATOR_EQU)) {
+                if(firstOperator.equals(OPERATOR_EQU) || firstOperator.equals(OPERATOR_PERCENT)) {
                     resultString = resultOperand.toString();
-                    stackOperand.pop();
-                    stackOperand.pop();
+                    popOperand();
+                    popOperand();
+                    popOperator();
+                    pushOperator(lastOperator);
                 } else {
-                    firstOperator = stackOperator.pop();
-                    lastOperand = stackOperand.pop();
-                    firstOperand = stackOperand.pop();
+                    firstOperator = popOperator();
+                    lastOperand = popOperand();
+                    firstOperand = popOperand();
                     resultString = doCalculate(firstOperand, lastOperand, firstOperator);
                     if(resultString.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || resultString.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
                         return resultString;
                     } else {
-                        stackOperand.push(resultOperand);
-                        stackOperator.push(lastOperator);
+                        pushOperand(resultOperand.toString());
+                        pushOperator(lastOperator);
                     }
                 }
             }
         }
         return resultString;
-    }
-
-    public String printResult() {
-        return resultOperand.toString();
-    }
-
-    public String printError() {
-        return null;
-    }
-
-    private String popOperator() {
-        return stackOperator.pop();
-    }
-
-    private BigDecimal popOperand() {
-        return stackOperand.pop();
     }
 
     private String doCalculate(BigDecimal operandA, BigDecimal operandB, String operator) {
@@ -140,11 +114,56 @@ public class CalculatorModel {
                 resultOperand = operandA.multiply(operandB);
                 break;
             case OPERATOR_PERCENT:
+                resultOperand = operandB.divide(new BigDecimal(100)).multiply(operandA);
                 break;
         }
         if(resultOperand.toString().length() > CalculatorView.MAX_NUMBER_COUNT) {
             return TO_LONG_RESULT_VALUE_ERROR_MESSAGE;
         }
         return resultOperand.toString();
+    }
+
+    private String popOperator() {
+        return stackOperator.pop();
+    }
+
+    private BigDecimal popOperand() {
+        return stackOperand.pop();
+    }
+
+    private BigDecimal peekOperand() {
+        return stackOperand.peek();
+    }
+
+    public void pushOperator(String operator) {
+        stackOperator.push(operator);
+    }
+
+    public void pushOperand(String operand) {
+        switch (operand) {
+            case EMPTY_RESULT:
+                stackOperand.push(new BigDecimal(ZERO_VALUE));
+                break;
+            case DIVIDE_BY_ZERO_ERROR_MESSAGE:
+            case TO_LONG_RESULT_VALUE_ERROR_MESSAGE:
+                resetCalculator();
+                break;
+            default:
+                stackOperand.push(new BigDecimal(operand));
+        }
+    }
+
+    public void cleanMemory() {
+        resetCalculator();
+    }
+
+    private void resetCalculator() {
+        firstOperand = null;
+        lastOperand = null;
+        resultOperand = null;
+        lastOperator = "";
+        firstOperator = "";
+        stackOperator.removeAll(stackOperator);
+        stackOperand.removeAll(stackOperand);
     }
 }

@@ -209,138 +209,85 @@ public class CalculatorView {
         frame.add(panelBase);
     }
 
-    public void enableButton(String buttonTitle) {
-        for(int i = 0; i < ROW_COUNT; i++) {
-            for(int j = 0; j < COLUMN_COUNT; j++) {
-                if(BUTTONS[i][j].getText().equals(buttonTitle)) {
-                    BUTTONS[i][j].setEnabled(true);
-                }
-            }
-        }
-    }
-
-    public void disableButton(String buttonTitle) {
-        for(int i = 0; i < ROW_COUNT; i++) {
-            for(int j = 0; j < COLUMN_COUNT; j++) {
-                if(BUTTONS[i][j].getText().equals(buttonTitle)) {
-                    BUTTONS[i][j].setEnabled(false);
-                }
-            }
-        }
-    }
-
-    public boolean isEnableButton(String buttonTitle) {
-        for(int i = 0; i < ROW_COUNT; i++) {
-            for(int j = 0; j < COLUMN_COUNT; j++) {
-                if(BUTTONS[i][j].getText().equals(buttonTitle)) {
-                    return BUTTONS[i][j].isEnabled();
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean isDisableButton(String buttonTitle) {
-        for(int i = 0; i < ROW_COUNT; i++) {
-            for(int j = 0; j < COLUMN_COUNT; j++) {
-                if(BUTTONS[i][j].getText().equals(buttonTitle)) {
-                    return !BUTTONS[i][j].isEnabled();
-                }
-            }
-        }
-        return false;
-    }
-
-    private class LimitField extends PlainDocument {
-        private static final long serialVersionUID = 1L;
-        @Override
-        public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-            if(str == null) {
-                return;
-            }
-            if((getLength() + str.length()) <= MAX_NUMBER_COUNT) {
-                super.insertString(offs, str, a);
-            } else {
-                textFieldDisplay.setText(str.substring(0, str.length() -  1));
-            }
-        }
-    }
-
     private void eventHandle() {
-        ActionListener mouseListenerNumber = (ae) -> {
-            JButton b = (JButton) ae.getSource();
-            String textButton = b.getText();
+        ActionListener mouseListener = (ae) -> {
+            JButton button = (JButton) ae.getSource();
+            String textButton = button.getText();
             String textDisplay = null;
-            if(isAllowCleanDisplay()) {
-                cleanDisplay();
-                textDisplay = textFieldDisplay.getText();
-                disallowCleanDisplay();
-            } else {
-                textDisplay = textFieldDisplay.getText();
-            }
-            Pattern patternNumbers = Pattern.compile("\\d");
-            Pattern patternOperators = Pattern.compile("["+BTN_ADD_TITLE+BTN_SUB_TITLE+BTN_DIV_TITLE+BTN_MUL_TITLE+
-                    BTN_PERCENT_TITLE+BTN_EQU_TITLE+BTN_CE_TITLE+BTN_C_TITLE+BTN_B_TITLE+"\\"+BTN_POINT_TITLE+"]" );
-            Matcher matcherNumber = patternNumbers.matcher(textButton);
-            Matcher matcherOperator = patternOperators.matcher(textButton);
-            switch (textButton) {
-                case BTN_POINT_TITLE:
-                    handleButtonPointEvent(textDisplay, textButton);
-                    break;
-                case BTN_SUB_TITLE:
-                    handleButtonSubEvent(textDisplay, textButton);
-                    break;
-                case BTN_ADD_TITLE:
-                    handleButtonAddEvent(textDisplay, textButton);
-                    break;
-                case BTN_DIV_TITLE:
-                    handleButtonDivEvent(textDisplay, textButton);
-                    break;
-                case BTN_MUL_TITLE:
-                    handleButtonMulEvent(textDisplay, textButton);
-                    break;
-                case BTN_PERCENT_TITLE:
-                    handleButtonPercentEvent(textDisplay, textButton);
-                    break;
-                case BTN_B_TITLE:
-                    handleButtonB_Event(textDisplay, textButton);
-                    break;
-                case BTN_C_TITLE:
-                    handleButtonC_Event(textDisplay, textButton);
-                    break;
-                case BTN_CE_TITLE:
-                    handleButtonCE_Event(textDisplay, textButton);
-                    break;
-                case BTN_EQU_TITLE:
-                    handleButtonEqualsEvent(textDisplay, textButton);
-                    break;
-                default:
-                    if(matcherNumber.find()) {
-                        if(isAllowCleanDisplay()) {
-                            cleanDisplay();
-                            disallowCleanDisplay();
-                        }
-                        if (isDisableButton(BTN_B_TITLE)) {
-                            enableButton(BTN_B_TITLE);
-                        }
-                        if(isDisableButton(BTN_CE_TITLE)) {
-                            enableButton(BTN_CE_TITLE);
-                        }
-                        setTextDisplay(textDisplay, textButton);
-                    } else {
-                        cleanDisplay();
-                        if(isDisableButton(BTN_POINT_TITLE)) {
-                            enableButton(BTN_POINT_TITLE);
-                        }
-                    }
-                    break;
-            }
+            calculatorActionHandler(textButton, textDisplay);
         };
 
         for(JButton[] buttonRow : BUTTONS) {
             for(JButton button : buttonRow) {
-                button.addActionListener(mouseListenerNumber);
+                button.addActionListener(mouseListener);
             }
+        }
+    }
+
+    private void calculatorActionHandler(String textButton, String textDisplay) {
+        if(isAllowCleanDisplay()) {
+            cleanDisplay();
+            textDisplay = textFieldDisplay.getText();
+            disallowCleanDisplay();
+        } else {
+            textDisplay = textFieldDisplay.getText();
+        }
+        Pattern patternNumbers = Pattern.compile("\\d");
+        Matcher matcherNumber = patternNumbers.matcher(textButton);
+        switch (textButton) {
+            case BTN_POINT_TITLE:
+                handleButtonPointEvent(textDisplay, textButton);
+                break;
+            case BTN_SUB_TITLE:
+                handleButtonSubEvent(textDisplay, textButton);
+                break;
+            case BTN_ADD_TITLE:
+                handleButtonAddEvent(textDisplay, textButton);
+                break;
+            case BTN_DIV_TITLE:
+                handleButtonDivEvent(textDisplay, textButton);
+                break;
+            case BTN_MUL_TITLE:
+                handleButtonMulEvent(textDisplay, textButton);
+                break;
+            case BTN_PERCENT_TITLE:
+                handleButtonPercentEvent(textDisplay, textButton);
+                break;
+            case BTN_B_TITLE:
+                handleButtonB_Event(textDisplay, textButton);
+                break;
+            case BTN_C_TITLE:
+                handleButtonC_Event(textDisplay, textButton);
+                break;
+            case BTN_CE_TITLE:
+                handleButtonCE_Event(textDisplay, textButton);
+                break;
+            case BTN_EQU_TITLE:
+                handleButtonEqualsEvent(textDisplay, textButton);
+                break;
+            default:
+                if(matcherNumber.find()) {
+                    if(isAllowCleanDisplay()) {
+                        cleanDisplay();
+                        disallowCleanDisplay();
+                    }
+                    if (isDisableButton(BTN_B_TITLE)) {
+                        enableButton(BTN_B_TITLE);
+                    }
+                    if(isDisableButton(BTN_CE_TITLE)) {
+                        enableButton(BTN_CE_TITLE);
+                    }
+                    if(isDisableButton(BTN_PERCENT_TITLE)) {
+                        enableButton(BTN_PERCENT_TITLE);
+                    }
+                    setTextDisplay(textDisplay, textButton);
+                } else {
+                    cleanDisplay();
+                    if(isDisableButton(BTN_POINT_TITLE)) {
+                        enableButton(BTN_POINT_TITLE);
+                    }
+                }
+                break;
         }
     }
 
@@ -355,7 +302,14 @@ public class CalculatorView {
     }
 
     private void handleButtonPercentEvent(String textDisplay, String textButton) {
-
+        calculatorController.pushOperand(textDisplay);
+        calculatorController.pushOperator(textButton);
+        cleanDisplay();
+        String resultString = calculatorController.getResult();
+        setTextDisplay(resultString, EMPTY_TEXT);
+        disableButton(BTN_CE_TITLE);
+        disableButton(BTN_B_TITLE);
+        disableButton(BTN_PERCENT_TITLE);
     }
 
     private void handleButtonB_Event(String textDisplay, String textButton) {
@@ -383,6 +337,9 @@ public class CalculatorView {
         if (isDisableButton(BTN_B_TITLE)) {
             enableButton(BTN_B_TITLE);
         }
+        if(isDisableButton(BTN_POINT_TITLE)) {
+            enableButton(BTN_POINT_TITLE);
+        }
     }
 
     private void handleButtonC_Event(String textDisplay, String textButton) {
@@ -394,6 +351,12 @@ public class CalculatorView {
         if(isDisableButton(BTN_CE_TITLE)) {
             enableButton(BTN_CE_TITLE);
         }
+        if(isDisableButton(BTN_POINT_TITLE)) {
+            enableButton(BTN_POINT_TITLE);
+        }
+        if(isDisableButton(BTN_PERCENT_TITLE)) {
+            enableButton(BTN_PERCENT_TITLE);
+        }
     }
 
     private void handleButtonEqualsEvent(String textDisplay, String textButton) {
@@ -404,6 +367,10 @@ public class CalculatorView {
         setTextDisplay(resultString, EMPTY_TEXT);
         disableButton(BTN_B_TITLE);
         disableButton(BTN_CE_TITLE);
+        disableButton(BTN_PERCENT_TITLE);
+        if(isDisableButton(BTN_POINT_TITLE)) {
+            enableButton(BTN_POINT_TITLE);
+        }
     }
 
     private void handleButtonSubEvent(String textDisplay, String textButton) {
@@ -473,5 +440,62 @@ public class CalculatorView {
 
     private void disallowCleanDisplay() {
         isAllowCleanDisplay = false;
+    }
+
+    public void enableButton(String buttonTitle) {
+        for(int i = 0; i < ROW_COUNT; i++) {
+            for(int j = 0; j < COLUMN_COUNT; j++) {
+                if(BUTTONS[i][j].getText().equals(buttonTitle)) {
+                    BUTTONS[i][j].setEnabled(true);
+                }
+            }
+        }
+    }
+
+    public void disableButton(String buttonTitle) {
+        for(int i = 0; i < ROW_COUNT; i++) {
+            for(int j = 0; j < COLUMN_COUNT; j++) {
+                if(BUTTONS[i][j].getText().equals(buttonTitle)) {
+                    BUTTONS[i][j].setEnabled(false);
+                }
+            }
+        }
+    }
+
+    public boolean isEnableButton(String buttonTitle) {
+        for(int i = 0; i < ROW_COUNT; i++) {
+            for(int j = 0; j < COLUMN_COUNT; j++) {
+                if(BUTTONS[i][j].getText().equals(buttonTitle)) {
+                    return BUTTONS[i][j].isEnabled();
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isDisableButton(String buttonTitle) {
+        for(int i = 0; i < ROW_COUNT; i++) {
+            for(int j = 0; j < COLUMN_COUNT; j++) {
+                if(BUTTONS[i][j].getText().equals(buttonTitle)) {
+                    return !BUTTONS[i][j].isEnabled();
+                }
+            }
+        }
+        return false;
+    }
+
+    private class LimitField extends PlainDocument {
+        private static final long serialVersionUID = 1L;
+        @Override
+        public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+            if(str == null) {
+                return;
+            }
+            if((getLength() + str.length()) <= MAX_NUMBER_COUNT) {
+                super.insertString(offs, str, a);
+            } else {
+                textFieldDisplay.setText(str.substring(0, str.length() -  1));
+            }
+        }
     }
 }
