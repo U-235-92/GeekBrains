@@ -54,20 +54,33 @@ public class CalculatorModel {
                     firstOperator = lastOperator;
                 }
             } else if(lastOperator.equals(OPERATOR_PERCENT)) {
-                lastOperand = popOperand();//stackOperand.pop();
-                firstOperand = peekOperand();//stackOperand.peek();
-                String resultPercent = doCalculate(firstOperand, lastOperand, lastOperator);
-                if(resultPercent.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || resultPercent.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
-                    return resultPercent;
-                }
-                firstOperator = stackOperator.pop();
-                resultString = doCalculate(firstOperand, new BigDecimal(resultPercent), firstOperator);
+//                lastOperand = popOperand();
+//                firstOperand = peekOperand();
+//                String resultPercent = doCalculate(firstOperand, lastOperand, lastOperator);
+//                if(resultPercent.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || resultPercent.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
+//                    return resultPercent;
+//                }
+//                firstOperator = stackOperator.pop();
+//                resultString = doCalculate(firstOperand, new BigDecimal(resultPercent), firstOperator);
+//                if(resultString.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || resultString.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
+//                    return resultString;
+//                } else {
+//                    popOperand();
+//                    pushOperand(resultOperand.toString());
+//                    pushOperand(resultPercent);
+//                    pushOperator(firstOperator);
+//                    firstOperator = lastOperator;
+//                }
+
+                lastOperand = popOperand();
+                firstOperand = peekOperand();
+                resultString = doCalculate(firstOperand, lastOperand, lastOperator);
                 if(resultString.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || resultString.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
                     return resultString;
                 } else {
                     popOperand();
                     pushOperand(resultOperand.toString());
-                    pushOperand(resultPercent);
+                    pushOperand(resultString);
                     pushOperator(firstOperator);
                     firstOperator = lastOperator;
                 }
@@ -90,6 +103,14 @@ public class CalculatorModel {
                         pushOperator(lastOperator);
                     }
                 }
+            }
+        } else {
+            if(stackOperand.peek().toString().equals("0") && stackOperator.peek().equals(OPERATOR_PERCENT)) {
+                popOperator();
+                popOperand();
+            } else if (stackOperator.peek().equals(OPERATOR_PERCENT)) {
+                popOperator();
+                resultString = popOperand().toString();
             }
         }
         return resultString;
@@ -114,8 +135,10 @@ public class CalculatorModel {
                 resultOperand = operandA.multiply(operandB);
                 break;
             case OPERATOR_PERCENT:
+//                resultOperand = operandB.divide(new BigDecimal(100)).multiply(operandA);
                 resultOperand = operandB.divide(new BigDecimal(100)).multiply(operandA);
                 break;
+
         }
         if(resultOperand.toString().length() > CalculatorView.MAX_NUMBER_COUNT) {
             return TO_LONG_RESULT_VALUE_ERROR_MESSAGE;

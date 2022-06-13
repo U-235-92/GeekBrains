@@ -382,6 +382,9 @@ public class CalculatorView {
             allowCleanDisplay();
             String resultString = calculatorController.getResult();
             setTextDisplay(resultString == EMPTY_TEXT ? textDisplay : resultString, EMPTY_TEXT);
+            if(isDisableButton(BTN_POINT_TITLE)) {
+                enableButton(BTN_POINT_TITLE);
+            }
         }
     }
 
@@ -394,6 +397,9 @@ public class CalculatorView {
             allowCleanDisplay();
             String resultString = calculatorController.getResult();
             setTextDisplay(resultString == EMPTY_TEXT ? textDisplay : resultString, EMPTY_TEXT);
+            if(isDisableButton(BTN_POINT_TITLE)) {
+                enableButton(BTN_POINT_TITLE);
+            }
         }
     }
 
@@ -406,6 +412,9 @@ public class CalculatorView {
             allowCleanDisplay();
             String resultString = calculatorController.getResult();
             setTextDisplay(resultString == EMPTY_TEXT ? textDisplay : resultString, EMPTY_TEXT);
+            if(isDisableButton(BTN_POINT_TITLE)) {
+                enableButton(BTN_POINT_TITLE);
+            }
         }
     }
 
@@ -418,6 +427,9 @@ public class CalculatorView {
             allowCleanDisplay();
             String resultString = calculatorController.getResult();
             setTextDisplay(resultString == EMPTY_TEXT ? textDisplay : resultString, EMPTY_TEXT);
+            if(isDisableButton(BTN_POINT_TITLE)) {
+                enableButton(BTN_POINT_TITLE);
+            }
         }
     }
 
