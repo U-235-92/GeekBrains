@@ -73,7 +73,7 @@ public class CalculatorView {
     private void getContent() {
         packContent();
         addContent();
-        eventHandle();
+        eventMouseHandle();
     }
 
     private void packContent() {
@@ -209,12 +209,11 @@ public class CalculatorView {
         frame.add(panelBase);
     }
 
-    private void eventHandle() {
+    private void eventMouseHandle() {
         ActionListener mouseListener = (ae) -> {
             JButton button = (JButton) ae.getSource();
             String textButton = button.getText();
-            String textDisplay = null;
-            calculatorActionHandler(textButton, textDisplay);
+            calculatorActionHandler(textButton);
         };
 
         for(JButton[] buttonRow : BUTTONS) {
@@ -224,7 +223,8 @@ public class CalculatorView {
         }
     }
 
-    private void calculatorActionHandler(String textButton, String textDisplay) {
+    private void calculatorActionHandler(String textButton) {
+        String textDisplay = null;
         if(isAllowCleanDisplay()) {
             cleanDisplay();
             textDisplay = textFieldDisplay.getText();
