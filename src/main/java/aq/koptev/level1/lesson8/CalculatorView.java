@@ -254,13 +254,13 @@ public class CalculatorView {
                 handleButtonPercentEvent(textDisplay, textButton);
                 break;
             case BTN_B_TITLE:
-                handleButtonB_Event(textDisplay, textButton);
+                handleButtonB_Event(textDisplay);
                 break;
             case BTN_C_TITLE:
-                handleButtonC_Event(textDisplay, textButton);
+                handleButtonC_Event(textDisplay);
                 break;
             case BTN_CE_TITLE:
-                handleButtonCE_Event(textDisplay, textButton);
+                handleButtonCE_Event(textDisplay);
                 break;
             case BTN_EQU_TITLE:
                 handleButtonEqualsEvent(textDisplay, textButton);
@@ -312,7 +312,7 @@ public class CalculatorView {
         disableButton(BTN_PERCENT_TITLE);
     }
 
-    private void handleButtonB_Event(String textDisplay, String textButton) {
+    private void handleButtonB_Event(String textDisplay) {
         if(!textDisplay.equals(EMPTY_TEXT)) {
             if(textDisplay.length() > 1) {
                 String operand = textDisplay.substring(0, textDisplay.length() - 1);
@@ -330,7 +330,7 @@ public class CalculatorView {
         }
     }
 
-    private void handleButtonCE_Event(String textDisplay, String textButton) {
+    private void handleButtonCE_Event(String textDisplay) {
         if(!textDisplay.equals(EMPTY_TEXT)) {
             cleanDisplay();
         }
@@ -342,7 +342,11 @@ public class CalculatorView {
         }
     }
 
-    private void handleButtonC_Event(String textDisplay, String textButton) {
+    private void handleButtonC_Event(String textDisplay) {
+        if(textDisplay.equals(CalculatorModel.TO_LONG_RESULT_VALUE_ERROR_MESSAGE) ||
+                textDisplay.equals(CalculatorModel.DIVIDE_BY_ZERO_ERROR_MESSAGE)) {
+            enableAllButtons();
+        }
         cleanDisplay();
         calculatorController.cleanMemory();
         if (isDisableButton(BTN_B_TITLE)) {
@@ -359,17 +363,43 @@ public class CalculatorView {
         }
     }
 
+    private void enableAllButtons() {
+        for(int i = 0; i < ROW_COUNT; i++) {
+            for(int j = 0; j < COLUMN_COUNT; j++) {
+                if(!BUTTONS[i][j].isEnabled()) {
+                    BUTTONS[i][j].setEnabled(true);
+                }
+            }
+        }
+    }
+
     private void handleButtonEqualsEvent(String textDisplay, String textButton) {
         calculatorController.pushOperand(textDisplay);
         calculatorController.pushOperator(textButton);
         cleanDisplay();
         String resultString = calculatorController.getResult();
-        setTextDisplay(resultString, EMPTY_TEXT);
-        disableButton(BTN_B_TITLE);
-        disableButton(BTN_CE_TITLE);
-        disableButton(BTN_PERCENT_TITLE);
-        if(isDisableButton(BTN_POINT_TITLE)) {
-            enableButton(BTN_POINT_TITLE);
+        if(resultString.equals(CalculatorModel.TO_LONG_RESULT_VALUE_ERROR_MESSAGE) ||
+                resultString.equals(CalculatorModel.DIVIDE_BY_ZERO_ERROR_MESSAGE)) {
+            setTextDisplay(resultString, EMPTY_TEXT);
+            enableOnlyC_Button();
+        } else {
+            setTextDisplay(resultString, EMPTY_TEXT);
+            disableButton(BTN_B_TITLE);
+            disableButton(BTN_CE_TITLE);
+            disableButton(BTN_PERCENT_TITLE);
+            if(isDisableButton(BTN_POINT_TITLE)) {
+                enableButton(BTN_POINT_TITLE);
+            }
+        }
+    }
+
+    private void enableOnlyC_Button() {
+        for(int i = 0; i < ROW_COUNT; i++) {
+            for(int j = 0; j < COLUMN_COUNT; j++) {
+                if(!BUTTONS[i][j].getText().equals(BTN_C_TITLE)) {
+                    BUTTONS[i][j].setEnabled(false);
+                }
+            }
         }
     }
 

@@ -5,8 +5,8 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 public class CalculatorModel {
-    private final String DIVIDE_BY_ZERO_ERROR_MESSAGE = "Divide by zero";
-    private final String TO_LONG_RESULT_VALUE_ERROR_MESSAGE = "Out of limit";
+    public static final String DIVIDE_BY_ZERO_ERROR_MESSAGE = "Divide by zero";
+    public static final String TO_LONG_RESULT_VALUE_ERROR_MESSAGE = "Out of limit";
     private final String EMPTY_RESULT = "";
     private final String OPERATOR_ADD = "+";
     private final String OPERATOR_SUB = "-";
@@ -54,33 +54,20 @@ public class CalculatorModel {
                     firstOperator = lastOperator;
                 }
             } else if(lastOperator.equals(OPERATOR_PERCENT)) {
-//                lastOperand = popOperand();
-//                firstOperand = peekOperand();
-//                String resultPercent = doCalculate(firstOperand, lastOperand, lastOperator);
-//                if(resultPercent.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || resultPercent.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
-//                    return resultPercent;
-//                }
-//                firstOperator = stackOperator.pop();
-//                resultString = doCalculate(firstOperand, new BigDecimal(resultPercent), firstOperator);
-//                if(resultString.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || resultString.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
-//                    return resultString;
-//                } else {
-//                    popOperand();
-//                    pushOperand(resultOperand.toString());
-//                    pushOperand(resultPercent);
-//                    pushOperator(firstOperator);
-//                    firstOperator = lastOperator;
-//                }
-
                 lastOperand = popOperand();
                 firstOperand = peekOperand();
-                resultString = doCalculate(firstOperand, lastOperand, lastOperator);
+                String resultPercent = doCalculate(firstOperand, lastOperand, lastOperator);
+                if(resultPercent.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || resultPercent.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
+                    return resultPercent;
+                }
+                firstOperator = stackOperator.pop();
+                resultString = doCalculate(firstOperand, new BigDecimal(resultPercent), firstOperator);
                 if(resultString.equals(DIVIDE_BY_ZERO_ERROR_MESSAGE) || resultString.equals(TO_LONG_RESULT_VALUE_ERROR_MESSAGE)) {
                     return resultString;
                 } else {
                     popOperand();
                     pushOperand(resultOperand.toString());
-                    pushOperand(resultString);
+                    pushOperand(resultPercent);
                     pushOperator(firstOperator);
                     firstOperator = lastOperator;
                 }
@@ -105,7 +92,10 @@ public class CalculatorModel {
                 }
             }
         } else {
-            if(stackOperand.peek().toString().equals("0") && stackOperator.peek().equals(OPERATOR_PERCENT)) {
+           if(stackOperand.size() == 0) {
+                return resultString;
+           }
+           if(stackOperand.peek().toString().equals("0") && stackOperator.peek().equals(OPERATOR_PERCENT)) {
                 popOperator();
                 popOperand();
             } else if (stackOperator.peek().equals(OPERATOR_PERCENT)) {
@@ -135,15 +125,14 @@ public class CalculatorModel {
                 resultOperand = operandA.multiply(operandB);
                 break;
             case OPERATOR_PERCENT:
-//                resultOperand = operandB.divide(new BigDecimal(100)).multiply(operandA);
                 resultOperand = operandB.divide(new BigDecimal(100)).multiply(operandA);
                 break;
 
         }
-        if(resultOperand.toString().length() > CalculatorView.MAX_NUMBER_COUNT) {
-            return TO_LONG_RESULT_VALUE_ERROR_MESSAGE;
-        }
-        return resultOperand.toString();
+        resultOperand = resultOperand.scale() > 0 ? resultOperand.stripTrailingZeros() : resultOperand;
+
+        return resultOperand.toString().length() > CalculatorView.MAX_NUMBER_COUNT ?
+                TO_LONG_RESULT_VALUE_ERROR_MESSAGE : resultOperand.toString();
     }
 
     private String popOperator() {
