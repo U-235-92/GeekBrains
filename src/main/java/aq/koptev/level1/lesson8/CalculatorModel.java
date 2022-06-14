@@ -1,6 +1,7 @@
 package aq.koptev.level1.lesson8;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Deque;
 import java.util.LinkedList;
 
@@ -116,10 +117,10 @@ public class CalculatorModel {
                 resultOperand = operandA.subtract(operandB);
                 break;
             case OPERATOR_DIV:
-                if(operandB.intValue() == 0) {
+                if(operandB.toString().matches("0|0\\.0+")) {
                     return DIVIDE_BY_ZERO_ERROR_MESSAGE;
                 }
-                resultOperand = operandA.divide(operandB);
+                resultOperand = operandA.divide(operandB, 2, RoundingMode.HALF_UP);
                 break;
             case OPERATOR_MUL:
                 resultOperand = operandA.multiply(operandB);
@@ -129,7 +130,8 @@ public class CalculatorModel {
                 break;
 
         }
-        resultOperand = resultOperand.scale() > 0 ? resultOperand.stripTrailingZeros() : resultOperand;
+        resultOperand = (resultOperand.scale() > 0) ? resultOperand.stripTrailingZeros() : resultOperand;
+        resultOperand = (resultOperand.scale() < 0) ? resultOperand.setScale(0) : resultOperand;
 
         return resultOperand.toString().length() > CalculatorView.MAX_NUMBER_COUNT ?
                 TO_LONG_RESULT_VALUE_ERROR_MESSAGE : resultOperand.toString();
