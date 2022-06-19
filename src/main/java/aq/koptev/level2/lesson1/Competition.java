@@ -26,33 +26,49 @@ public class Competition {
         Obstacle[] obstacles = {track1, track2, wall1, track3, wall2, wall3, track4, wall4, track5, wall5};
 
         System.out.println("Участники соревнований:");
-        for (Activable unit : activables) {
-            System.out.println(unit);
-        }
+        printCompetitionParticipants(activables);
         System.out.println("Препятсвия:");
-        for (Obstacle obstacle : obstacles) {
-            System.out.println(obstacle);
-        }
+        printCompetitionObstacles(obstacles);
         System.out.println("Старт полосы препятсвий!");
-        for(Activable unit : activables) {
-            for (Obstacle obstacle : obstacles) {
-                if(obstacle instanceof Wall) {
-                    if(unit.canJump(obstacle.getSize())) {
-                        unit.jump();
-                    }
-                } else if(obstacle instanceof Track) {
-                    if(unit.canRun(obstacle.getSize())) {
-                        unit.run();
-                    }
-                }
-            }
-        }
+        startCompetition(obstacles, activables);
         System.out.println("Соревнования закончились!");
         System.out.println("Участники, успешно прошедшие полосу препятсвий:");
-        for(Activable unit : activables) {
-            if(unit.isCanActive()) {
-                System.out.println(unit);
-            }
-        }
+        printCompetitionWinners(activables);
+   }
+
+   private void printCompetitionParticipants(Activable[] activables) {
+       for (Activable unit : activables) {
+           System.out.println(unit);
+       }
+   }
+
+   private void printCompetitionObstacles(Obstacle[] obstacles) {
+       for (Obstacle obstacle : obstacles) {
+           System.out.println(obstacle);
+       }
+   }
+
+   private void printCompetitionWinners(Activable[] activables) {
+       for(Activable unit : activables) {
+           if(unit.isCanActive()) {
+               System.out.println(unit);
+           }
+       }
+   }
+
+   private void startCompetition(Obstacle[] obstacles, Activable[] activables) {
+       for(Activable unit : activables) {
+           for (Obstacle obstacle : obstacles) {
+               if(obstacle instanceof Wall) {
+                   if(unit.canJump(obstacle.getSize())) {
+                       unit.jump();
+                   }
+               } else if(obstacle instanceof Track) {
+                   if(unit.canRun(obstacle.getSize())) {
+                       unit.run();
+                   }
+               }
+           }
+       }
    }
 }
