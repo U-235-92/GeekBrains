@@ -1,7 +1,5 @@
 package aq.koptev.level2.lesson2;
 
-import java.util.Arrays;
-
 public class Main {
 
     public static void main(String[] args) {
@@ -12,9 +10,7 @@ public class Main {
         String[][] nullBigMatrix = main.getNullMatrix(5, 5);
         String[][] randomSymbolMatrix = main.getRandomMatrix(4, 4);
         String[][] numberSymbolMatrix = main.getNumberSymbolMatrix();
-        Object[] objects = {/*numberMatrix, nullBigMatrix, randomSymbolMatrix,*/ numberSymbolMatrix};
-        System.out.println("Печать матриц:");
-        printArrayMatrix(objects);
+        Object[] objects = {numberMatrix, nullBigMatrix, randomSymbolMatrix, numberSymbolMatrix};
         System.out.println("Расчет суммы числовых элементов каждой матрицы");
         getSumElementsEachMatrix(exceptionRunner, objects);
     }
@@ -68,7 +64,8 @@ public class Main {
     private static void getSumElementsEachMatrix(ExceptionRunner exceptionRunner, Object[] objects) {
         for(int i = 0; i < objects.length; i++) {
             System.out.println("Расчитываем результат матрицы №" + (i + 1));
-            int result = exceptionRunner.dangerSumElementMatrix((String[][]) objects[i]);
+            printMatrix((String[][]) objects[i]);
+            int result = exceptionRunner.getSumNumberElementMatrix((String[][]) objects[i]);
             System.out.println("Сумма числовых элементов матрицы №" + (i + 1) + " = " + result + "\n");
         }
     }

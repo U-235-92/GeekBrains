@@ -4,11 +4,18 @@ public class ExceptionRunner {
 
     private final int MATRIX_SIZE = 4;
 
-    public int dangerSumElementMatrix(String[][] matrixNumber) {
-        return dangerSumElementMatrix0(matrixNumber, 0, 0);
+    public int getSumNumberElementMatrix(String[][] matrixNumber) {
+        return getSumNumberElementMatrix(matrixNumber, 0, 0);
     }
 
-    private int dangerSumElementMatrix0(String[][] matrixNumber, int startRowIndex, int startColumnIndex) {
+    private int getSumNumberElementMatrix(String[][] matrixNumber, int startRowIndex, int startColumnIndex) {
+        if(catchWrongSizeMatrix(matrixNumber)) {
+            return 0;
+        }
+        return getSumNumberElementMatrix0(matrixNumber, startRowIndex, startColumnIndex);
+    }
+
+    private boolean catchWrongSizeMatrix(String[][] matrixNumber) {
         try {
             if(matrixNumber.length != MATRIX_SIZE && matrixNumber[0].length != MATRIX_SIZE) {
                 throw new MatrixSizeException(matrixNumber.length, matrixNumber[0].length);
@@ -16,15 +23,21 @@ public class ExceptionRunner {
         } catch (MatrixSizeException e) {
             e.printStackTrace();
             System.out.println("Обнаружена ошибка размера массива!");
-            return 0;
+            return true;
         }
+        return false;
+    }
+
+    private int getSumNumberElementMatrix0(String[][] matrixNumber, int startRowIndex, int startColumnIndex) {
         int result = 0;
         int wrongRow = 0, wrongColumn = 0;
         try {
             for(int i = startRowIndex; i < matrixNumber.length; i++) {
+                if(i > startRowIndex && startColumnIndex > 0) {
+                    startColumnIndex = 0;
+                }
                 if(startColumnIndex == matrixNumber[0].length) {
                     startColumnIndex = 0;
-                    startRowIndex = startRowIndex + 1;
                     continue;
                 }
                 for(int j = startColumnIndex; j < matrixNumber[0].length; j++) {
@@ -35,7 +48,7 @@ public class ExceptionRunner {
                     } else {
                         wrongRow = i;
                         wrongColumn = j;
-                        throw new MatrixDataException(i, j);
+                        throw new MatrixDataException(wrongRow, wrongColumn);
                     }
                 }
             }
@@ -43,14 +56,7 @@ public class ExceptionRunner {
             e.printStackTrace();
             System.out.println("Обнаружен неформатируемый элемент в позиции массива " +
                     "[" + wrongRow + "; " + wrongColumn + "]");
-            result += dangerSumElementMatrix0(matrixNumber, wrongRow, wrongColumn + 1);
-//            if(wrongRow < matrixNumber.length) {
-//                if(wrongColumn < matrixNumber[0].length) {
-//                    result += dangerSumElementMatrix0(matrixNumber, wrongRow, wrongColumn + 1);
-//                } else {
-//                    result += dangerSumElementMatrix0(matrixNumber, wrongRow + 1, 0);
-//                }
-//            }
+            result += getSumNumberElementMatrix0(matrixNumber, wrongRow, wrongColumn + 1);
         }
         return result;
     }
