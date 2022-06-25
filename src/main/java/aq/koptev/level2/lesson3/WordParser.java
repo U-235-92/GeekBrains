@@ -5,7 +5,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WordParser {
-
     private List<String> listWords = null;
     private Set<String> setWords = null;
     private Map<String, Integer> mapWordsCount = null;

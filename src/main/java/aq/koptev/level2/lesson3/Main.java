@@ -1,7 +1,6 @@
 package aq.koptev.level2.lesson3;
 
 public class Main {
-
     public static void main(String[] args) {
         String text = "...Отчаяние свойственно тем," +
                 " кто не понимает причин зла," +
