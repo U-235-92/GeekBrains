@@ -3,7 +3,6 @@ package aq.koptev.level2.lesson4;
 import java.util.Arrays;
 
 public class MathNumerator {
-
     private static final int SIZE = 10000000;
     private static final int HALF_SIZE = SIZE / 2;
     private static final int MIDDLE_INDEX = SIZE / 2;
