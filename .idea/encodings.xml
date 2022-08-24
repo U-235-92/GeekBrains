@@ -2,5 +2,34 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level1/lesson4/Main.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level1/lesson7/Cat.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level1/lesson7/Dish.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level1/lesson7/Food.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level1/lesson7/FoodFish.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level1/lesson7/FoodMeat.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level1/lesson7/FoodMilk.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level1/lesson7/Main.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level1/lesson8/CalculatorController.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level1/lesson8/CalculatorModel.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level1/lesson8/CalculatorView.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level1/lesson8/Main.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson1/Cat.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson1/Competition.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson1/Human.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson1/Main.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson1/Obstacle.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson1/Robot.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson1/Sex.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson1/Track.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson1/Wall.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson2/ExceptionRunner.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson2/Main.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson2/MatrixDataException.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson2/MatrixSizeException.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson3/Main.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson3/TelephoneBook.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level2/lesson3/WordParser.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/aq/koptev/level3/lesson5/MainClass.java" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

@@ -197,7 +197,7 @@ public class Main {
 
         switch (msg) {
 
-            case "Y", "y", "Yes", "yes", "YES", "Да", "да", "ДА", "+" :
+            case "y":
                 return true;
             default:
                 return false;
