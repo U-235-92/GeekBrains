@@ -1,29 +1,79 @@
 package aq.koptev.level3.lesson7.app;
 
+import aq.koptev.level3.lesson4.A;
 import aq.koptev.level3.lesson7.annotations.*;
 import aq.koptev.level3.lesson7.exception.NoSingleAnnotationException;
 import aq.koptev.level3.lesson7.exception.PriorityTestLevelException;
 import aq.koptev.level3.lesson7.test.TestDemo;
+import aq.koptev.level3.lesson7.util.LaunchOrder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.Type;
+import java.util.*;
 
 public class TestApp {
-    private static final Comparator<? super Method> CALL_METHOD_ORDER_COMPARATOR = ((m1, m2) -> {
 
+    private static final Comparator<? super Method> CALL_METHOD_ORDER_COMPARATOR = ((m1, m2) -> {
+        Annotation[] annotationsM1 = m1.getAnnotations();
+        Annotation[] annotationsM2 = m2.getAnnotations();
+        Annotation annotationM1 = annotationsM1[0];
+        Annotation annotationM2 = annotationsM2[0];
+        if(annotationsM1.length > 1) {
+            for(int i = 0; i < annotationsM1.length; i++) {
+                if(annotationsM1[i].annotationType() == BeforeSuite.class) {
+                    annotationM1 = annotationsM1[i];
+                    break;
+                } else if(annotationsM1[i].annotationType() == AfterSuite.class) {
+                    annotationM1 = annotationsM1[i];
+                    break;
+                }
+            }
+        }
+        if(annotationsM2.length > 1) {
+            for(int i = 0; i < annotationsM2.length; i++) {
+                if(annotationsM1[i].annotationType() == BeforeSuite.class) {
+                    annotationM2 = annotationsM2[i];
+                    break;
+                } else if(annotationsM1[i].annotationType() == AfterSuite.class) {
+                    annotationM2 = annotationsM2[i];
+                    break;
+                }
+            }
+        }
+        LaunchOrder launchOrderM1 = annotationM1.annotationType().getAnnotation(CallOrder.class).order();
+        LaunchOrder launchOrderM2 = annotationM2.annotationType().getAnnotation(CallOrder.class).order();
+        return launchOrderM2.getPriority() - launchOrderM1.getPriority();
     });
 
     private static final Comparator<? super Method> PRIORITY_TEST_COMPARATOR = ((m1, m2) -> {
-
+        int priorityM1 = 0;
+        int priorityM2 = 0;
+        for(int i = 0; i < m1.getAnnotations().length; i++) {
+            if(m1.getAnnotations()[i].annotationType() == Test.class) {
+                for(int j = 0; j < m2.getAnnotations().length; j++) {
+                    if(m2.getAnnotations()[j].annotationType() == Test.class) {
+                        priorityM1 = m1.getAnnotation(Test.class).priority();
+                        priorityM2 = m2.getAnnotation(Test.class).priority();
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        return priorityM2 - priorityM1;
     });
     private static int countBeforeSuitAnnotation = 0;
+
     private static int countAfterSuitAnnotation = 0;
-    
+
+    public static void main(String[] args) {
+        TestDemo triangleTest = new TestDemo();
+        TestApp.test(triangleTest.getClass(), triangleTest); //"aq.koptev.level3.lesson7.test.TestDemo"
+    }
+
     public static <T extends Object> void test(Class<?> clazz, T obj) {
         try {
             test0(clazz, obj);
@@ -53,8 +103,7 @@ public class TestApp {
         methods.sort(CALL_METHOD_ORDER_COMPARATOR);
         methods.sort(PRIORITY_TEST_COMPARATOR);
         for(Method method : methods) {
-            System.out.println(method);
-//            handleMethod(method, obj);
+            handleMethod(method, obj);
         }
     }
 
@@ -81,7 +130,7 @@ public class TestApp {
                         e.printStackTrace();
                     }
                 }
-            } else if(annotation.annotationType() == aq.koptev.level3.lesson7.annotations.Test.class) {
+            } else if(annotation.annotationType() == Test.class) {
                 try {
                     handleTestAnnotation(method, obj);
                 } catch (InvocationTargetException e) {
@@ -123,11 +172,34 @@ public class TestApp {
         if(test.priority() > level.max() || test.priority() < level.min()) {
             throw new PriorityTestLevelException();
         }
-        method.invoke(obj);
-    }
-
-    public static void main(String[] args) {
-        TestDemo triangleTest = new TestDemo();
-        TestApp.test(triangleTest.getClass(), triangleTest);
+        Parameter[] parameters = method.getParameters();
+        System.out.println(String.format("Priority next method is: %d", method.getAnnotation(Test.class).priority()));
+        if(parameters.length > 0) {
+            Object[] objects = new Object[method.getParameters().length];
+            for(int i = 0; i < parameters.length; i++) {
+                if(parameters[i].getType().equals(int.class)) {
+                    objects[i] = 0;
+                } else if(parameters[i].getType().equals(float.class)) {
+                    objects[i] = 0.0f;
+                } else if(parameters[i].getType().equals(double.class)) {
+                    objects[i] = 0.0;
+                } else if(parameters[i].getType().equals(boolean.class)) {
+                    objects[i] = false;
+                } else if(parameters[i].getType().equals(byte.class)) {
+                    objects[i] = 0;
+                } else if(parameters[i].getType().equals(long.class)) {
+                    objects[i] = 0l;
+                } else if(parameters[i].getType().equals(short.class)) {
+                    objects[i] = 0;
+                } else if(parameters[i].getType().equals(char.class)) {
+                    objects[i] = ' ';
+                } else {
+                    objects[i] = null;
+                }
+            }
+            method.invoke(obj, objects);
+        } else {
+            method.invoke(obj);
+        }
     }
 }
