@@ -15,7 +15,6 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 public class TestApp {
-
     private static final Comparator<? super Method> CALL_METHOD_ORDER_COMPARATOR = ((m1, m2) -> {
         Annotation[] annotationsM1 = m1.getAnnotations();
         Annotation[] annotationsM2 = m2.getAnnotations();
